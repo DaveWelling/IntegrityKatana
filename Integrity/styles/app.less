@@ -1,0 +1,103 @@
+﻿
+@import "../bower_components/bootstrap/less/variables.less";
+@import "../bower_components/bootstrap/less/mixins.less";
+@import "../bower_components/bootstrap/less/list-group.less";
+@import "../bower_components/bootstrap/less/buttons.less";
+@import "../bower_components/bootstrap/less/glyphicons.less";		   
+body {
+}
+
+header, footer {
+    background-color: #333;
+    color: #ddd;
+    padding: 20px;
+    text-align: center;
+}
+
+
+.icon {
+  display: inline-block;
+  margin-top:6px;
+  margin-right:6px;
+  width: 16px;
+  height: 16px;
+}	   
+.treeBoundary{
+	padding: 5px;
+	margin: 5px;
+	border-width: 2px;
+	border-color: transparent;
+	border-style:solid;
+}
+.treeBoundary:hover{
+	border-color: #ddd;
+	border-style:solid;
+}
+.dropZone{ 
+	border-width: 2px;
+	border-color: transparent;
+	border-style: hidden;
+	height: 5px;
+}
+.dropZoneActive{
+	border-color: #ddd;
+	border-style:dashed;
+}
+.tree {
+	display:inline;
+}
+.tree>ul{
+	padding-left:20px;
+}
+.tree>ul>li {
+  list-style-type: none;
+} 
+.expanded {
+  .glyphicon;
+  .glyphicon-triangle-bottom;
+  //background-image: url(../img/expanded.png);
+}
+.collapsed {
+  .glyphicon;
+  .glyphicon-triangle-right;
+  //background-image: url(../img/collapsed.png);
+}
+.wiContent {
+	margin-left: 16px;
+}
+
+.workitemText {
+    border-color: transparent; 
+    border-radius: 3px;
+    height:29px;
+}
+
+.button-add {
+    .btn;
+    .btn-default;
+    border-color: transparent;
+}
+.hoverable{    
+    display: inline-block;
+    border-radius: 3px;
+    padding: 3px;
+    /*padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 5px;*/
+    height:35px;
+}
+.show-on-hover{
+}
+.node-btn-group{
+    height:29px;
+}
+.hoverable:hover {
+    background-color: dimgray;
+}
+.hoverable:not(:hover) > .show-on-hover {
+    display: none;
+}
+.hoverable:hover > .show-on-hover {
+    display: inline-block;
+}

@@ -1,0 +1,26 @@
+﻿<div class="dropZone"></div>
+<span name="iconPlaceholder" class="icon">
+    <span ng-class="{collapsed: collapsed, expanded: !collapsed}"
+          ng-click="toggleNodeExpansion()"
+          ng-show="hasChildren()"></span>
+</span>
+<div class="hoverable">
+    <input type="text"
+           class="draggable workitemText"
+           draggable="true"
+           ng-model="link.node.title"
+           ng-model-options="{debounce : 1000}"
+           ng-change="workItemTextChange()">
+    <div class="show-on-hover">
+        <div class="btn-group node-btn-group" role="group">
+            <button class="btn btn-default btn-sm" title="Add a child">
+                <span class="glyphicon glyphicon-plus-sign"
+                      ng-click="addChild()"></span>
+            </button>
+            <button class="btn btn-default btn-sm" title="Add rich text">
+                <span class="glyphicon glyphicon-list-alt"
+                      ng-click="addRichText()"></span>
+            </button>
+        </div>
+    </div>
+</div>
