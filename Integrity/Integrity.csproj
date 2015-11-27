@@ -45,11 +45,13 @@
   <ItemGroup>
     <Content Include="bower_components\interact\interact.js" />
     <Content Include="bower_components\interact\interact.min.js" />
+    <Content Include="bower_components\jquery\dist\jquery.js" />
     <Content Include="bower_components\underscore\underscore-min.js" />
     <Content Include="src\common\Objectid.js" />
     <Content Include="src\tree\treeChildController.js" />
     <Content Include="src\tree\treeGroupDirective.js" />
     <Content Include="src\tree\treeTemplate.html" />
+    <Content Include="src\workitems\nodeKeyboardActions.js" />
     <Content Include="src\workitems\nodeMgmtService.js" />
     <Content Include="src\workitems\nodePersistence.js" />
     <Content Include="styles\app.less" />

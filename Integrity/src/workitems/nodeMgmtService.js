@@ -1,30 +1,53 @@
 ﻿(function(module) {
-	module. service('nodeMgmtService', nodeMgmtService);
+    module.service('nodeMgmtService', nodeMgmtService);
 
-	function nodeMgmtService(defaultRoot, nodePersistence, ObjectId) {
-	    
-	    return {
-		    getRoot: getRoot,
-		    getNode: getNode,
-		    saveNode: saveNode,
-            addNewChildToNode: addNewChild
-	    }
+    function nodeMgmtService(defaultRoot, nodePersistence, ObjectId, $q) {
 
-	    function addNewChild(parentNode) {
+        var service = {
+            getRoot: getRoot,
+            getNode: getNode,
+            saveNode: saveNode,
+			removeNode: removeNode,
+            addNewChildToNode: addNewChildToNode,
+            addNewSiblingNode: addNewSiblingNode
+        }
+
+		function removeNode(){
+			throw "Not implemented";
+		}
+
+        function addNewSiblingNode(currentLink, parentNode) {
+            var newSequence = currentLink.sequence + 1;
+            return service.addNewChildToNode(parentNode, newSequence);
+        }
+
+        function addNewChildToNode(parentNode, newSequence) {
+            newSequence  = newSequence || parentNode.links.length
             var newNode = {
                 id: (new ObjectId).toString(),
-                title: "new Node",
+                title: "",
                 description: "",
                 links: []
             }
             parentNode.links = parentNode.links || [];
             parentNode.links.push({
                 id: newNode.id,
+                sequence: newSequence,
                 node: newNode
             });
-            nodePersistence.saveNode(newNode);
-            nodePersistence.saveNode(parentNode);
-	    }
+            for (var i = 0; i < parentNode.links.length; i++) {
+                var link = parentNode.links[i];
+                if (link.sequence >= newSequence && link.id != newNode.id) {
+                    link.sequence++;
+                }
+            }
+            return $q.all([
+                service.saveNode(newNode),
+                service.saveNode(parentNode)
+            ]).then(function(results) {
+                return results[0]; // return the new node only;
+            });
+	}
         function getRoot() {
             return nodePersistence.getNode(defaultRoot)
                 .then(function(root) {
@@ -49,9 +72,14 @@
             var shallowClone = _.clone(node);
             shallowClone.links = [];
             for (var i = 0; i < node.links.length; i++) {
-                shallowClone.links.push({ id: node.links[i].id });
+                shallowClone.links.push({
+                    id: node.links[i].id,
+                    sequence: node.links[i].sequence
+                });
             }
-            return nodePersistence.saveNode(shallowClone);
+            return nodePersistence.saveNode(shallowClone).then(function() {
+                return node;
+            });
         }
         function createRoot() {
             var newNode = {
@@ -66,6 +94,7 @@
                 return newNode;
             });
         }
-        
+
+	    return service;
 	}
 })(angular.module('app'));

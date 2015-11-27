@@ -1,5 +1,6 @@
-﻿(function() {
-	var module = angular.module("app", ["ui.router"]);
+﻿(function () {
+    angular.module("tree", []);
+	var module = angular.module("app", ["ui.router", "tree"]);
 	module.config(function($stateProvider, $urlRouterProvider) {
 
 		$urlRouterProvider.otherwise("/workspace");

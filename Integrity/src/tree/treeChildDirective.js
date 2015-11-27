@@ -1,7 +1,7 @@
 ﻿(function(module) {
 	module.directive("treeChild", treeChildDirective);
 	
-	function treeChildDirective($compile, nodeMgmtService) {
+	function treeChildDirective($compile, nodeMgmtService, $window, $timeout) {
 		return {
 			templateUrl: "/src/tree/treeChildTemplate.html",
 			scope: {
@@ -10,7 +10,14 @@
 			controller: "treeChildController",
 			link: function (scope, element, attributes, controller) {
 				scope.addTree = function() { addTree(scope, element); };
-				//setUpDragAndDrop(scope, element);
+			    //setUpDragAndDrop(scope, element);
+				scope.focus = function (nodeToFocusOn) {
+				    $timeout(function () {
+				        var element = $window.document.getElementById("input" + nodeToFocusOn.id);
+				        if (element)
+				            element.focus();
+				    });
+			    };
 			}	
 		}
 		function setUpDragAndDrop(scope, element) {
@@ -98,4 +105,4 @@
 	document.addEventListener("touchmove", touchHandler, true);
 	document.addEventListener("touchend", touchHandler, true);
 	document.addEventListener("touchcancel", touchHandler, true);
-})(angular.module('app'));
+})(angular.module('tree'));

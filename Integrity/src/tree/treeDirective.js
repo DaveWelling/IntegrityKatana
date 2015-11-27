@@ -58,4 +58,4 @@
 			//}
 		}
 	}
-})(angular.module("app"));
+})(angular.module("tree"));

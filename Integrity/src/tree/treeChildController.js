@@ -1,7 +1,7 @@
 ﻿(function(module) {
     module.controller('treeChildController', treeChildController);
 
-    function treeChildController($scope, nodeMgmtService) {
+    function treeChildController($scope, nodeMgmtService, nodeKeyboardActions, $document) {
         $scope.collapsed = true;
         $scope.hasBeenExpanded = false;
         $scope.hasChildren = function () {
@@ -26,12 +26,19 @@
                 $scope.hasBeenExpanded = true;
             }
         }
+        $scope.titleKeyPress = function (keyEvent) {
+            nodeKeyboardActions.keypress($scope, keyEvent);
+        };
         // If this link is a new link, the app will have given it
         // a node.  Otherwise, get the node using the ID.
         if (!$scope.link.node) {
             nodeMgmtService.getNode($scope.link.id).then(function(result) {
-                $scope.link.node = result.data;
+                $scope.link.node = result;
             });
         }
+		$scope.focus = function(nodeToFocus){
+		    var nodeElement = angular.element($document[0].querySelector('#input' + nodeToFocus.id));
+		    nodeElement.focus();
+		};
     }
 })(angular.module('app'));
