@@ -1,20 +1,46 @@
 ﻿(function(module) {
     module.service('nodeMgmtService', nodeMgmtService);
 
-    function nodeMgmtService(defaultRoot, nodePersistence, ObjectId, $q) {
+    function nodeMgmtService(defaultRootId, nodePersistence, ObjectId, $q) {
 
+        var nodeHash = {};
         var service = {
             getRoot: getRoot,
             getNode: getNode,
             saveNode: saveNode,
 			removeNode: removeNode,
             addNewChildToNode: addNewChildToNode,
-            addNewSiblingNode: addNewSiblingNode
+            addNewSiblingNode: addNewSiblingNode,
+            initNodes: initNodes
         }
 
-		function removeNode(){
-			throw "Not implemented";
-		}
+        function initNodes(startingNodes) {
+            _.forEach(startingNodes, function(node) {
+                nodeHash[node.id] = node;
+            });
+        }
+
+
+        function removeNode(nodeToRemove) {
+            var parentNodes = getParentsFromNode(nodeToRemove);
+            _.forEach(parentNodes, function (parentNode) {
+                var childLink = _.find(parentNode.links, function(link) {
+                    return link.id === nodeToRemove.id && link.linkType === "child";
+                });
+                parentNode.links.pop(childLink);
+                nodePersistence.saveNode(parentNode);
+            });
+		    return nodePersistence.removeNode(nodeToRemove);
+        }
+
+        function getParentsFromNode(childNode) {
+            var parentLinks = _.where(childNode.links, { linkType: "parent" });
+            var parentNodes = [];
+            _.forEach(parentLinks, function (link) {
+                parentNodes.push(nodeHash[link.id]);
+            });
+            return parentNodes;
+        }
 
         function addNewSiblingNode(currentLink, parentNode) {
             var newSequence = currentLink.sequence + 1;
@@ -22,7 +48,7 @@
         }
 
         function addNewChildToNode(parentNode, newSequence) {
-            newSequence  = newSequence || parentNode.links.length
+            newSequence = newSequence || parentNode.links.length;
             var newNode = {
                 id: (new ObjectId).toString(),
                 title: "",
@@ -33,11 +59,17 @@
             parentNode.links.push({
                 id: newNode.id,
                 sequence: newSequence,
-                node: newNode
+                node: newNode,
+                linkType: "child"
+            });
+            newNode.links.push({
+                id: parentNode.id,
+                sequence: parentNode.links.length,
+                linkType: "parent"
             });
             for (var i = 0; i < parentNode.links.length; i++) {
                 var link = parentNode.links[i];
-                if (link.sequence >= newSequence && link.id != newNode.id) {
+                if (link.sequence >= newSequence && link.id !== newNode.id) {
                     link.sequence++;
                 }
             }
@@ -49,8 +81,9 @@
             });
 	}
         function getRoot() {
-            return nodePersistence.getNode(defaultRoot)
-                .then(function(root) {
+            return nodePersistence.getNode(defaultRootId)
+                .then(function (root) {
+                    nodeHash[defaultRootId] = root.data;
                     return root.data;
                 }).catch(function (err) {
                     if (err.status === 404) {
@@ -60,7 +93,8 @@
                 });
         }
         function getNode(id) {
-            return nodePersistence.getNode(id).then(function(result) {
+            return nodePersistence.getNode(id).then(function (result) {
+                nodeHash[id] = result.data;
                 return result.data;
             });
         }
@@ -83,13 +117,14 @@
         }
         function createRoot() {
             var newNode = {
-                id: defaultRoot,
+                id: defaultRootId,
                 title: "Root",
                 description: "",
                 links: [],
                 createdTime: new Date().getTime(),
                 modifiedTime : new Date().getTime()
             }
+            nodeHash[defaultRootId] = newNode;
             return nodePersistence.saveNode(newNode).then(function() {
                 return newNode;
             });

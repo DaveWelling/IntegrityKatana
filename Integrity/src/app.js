@@ -12,5 +12,5 @@
 		//    .state("costs", { parent: "dashboard", url: "/costs", templateUrl: "templates/costs.html" })
 		//.state("admin", { url: "/admin", templateUrl: "templates/admin.html" });
 	});
-	module.constant("defaultRoot", "563d154bb10aed3128486786");
+	module.constant("defaultRootId", "563d154bb10aed3128486786");
 })();
